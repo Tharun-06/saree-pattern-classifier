@@ -3,6 +3,8 @@ import torch
 import torch.nn as nn
 from torchvision import models, transforms
 from PIL import Image
+import urllib.request
+import os
 
 # -----------------------------
 # Page Configuration
@@ -50,15 +52,31 @@ class SareeNet(nn.Module):
 
 
 # -----------------------------
-# Load Model
+# Download Model
 # -----------------------------
+MODEL_PATH = "best_sareenet.pth"
+
+MODEL_URL = (
+    "https://github.com/Tharun-06/"
+    "saree-pattern-classifier/releases/download/"
+    "v1.0/best_sareenet.pth"
+)
+
 @st.cache_resource
 def load_model():
+
+    if not os.path.exists(MODEL_PATH):
+
+        with st.spinner("Downloading trained model..."):
+            urllib.request.urlretrieve(
+                MODEL_URL,
+                MODEL_PATH
+            )
 
     model = SareeNet(num_classes=4)
 
     checkpoint = torch.load(
-        "best_sareenet.pth",
+        MODEL_PATH,
         map_location=device
     )
 
